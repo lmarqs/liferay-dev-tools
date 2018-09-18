@@ -1,6 +1,9 @@
-
-\.gradle/
-
-\.idea/
-
 *.iml
+.classpath
+.gradle
+.idea
+.project
+.settings
+bin
+build
+mavenRepo
