@@ -1,0 +1,29 @@
+buildscript {
+	dependencies {
+		classpath group: 'biz.aQute.bnd', name: 'biz.aQute.bnd.gradle', version: '3.5.0'
+		classpath group: 'de.undercouch', name: 'gradle-download-task', version: '3.3.0'
+	}
+
+	repositories {
+		maven {
+			url 'https://repository-cdn.liferay.com/nexus/content/groups/public'
+		}
+	}
+}
+
+apply plugin: 'biz.aQute.bnd.builder'
+apply plugin: 'java'
+
+dependencies {
+	compileOnly group: 'com.beust', name: 'jcommander', version: '1.72'
+	compileOnly group: 'com.liferay.blade', name: 'com.liferay.blade.cli', version: '3.1.2'
+}
+
+repositories {
+	maven {
+		url 'https://liferay-test-01.ci.cloudbees.com/job/liferay-blade-cli/lastSuccessfulBuild/artifact/mavenRepo/'
+	}
+	maven {
+		url 'https://repository-cdn.liferay.com/nexus/content/groups/public'
+	}
+}
