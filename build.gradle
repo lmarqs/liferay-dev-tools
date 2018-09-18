@@ -1,39 +1,28 @@
-buildscript {
-	dependencies {
-		classpath group: "biz.aQute.bnd", name: "biz.aQute.bnd.gradle", version: "3.5.0"
-		classpath group: "com.liferay", name: "com.liferay.gradle.plugins.source.formatter", version: "latest.release"
-		classpath group: "de.undercouch", name: "gradle-download-task", version: "3.3.0"
-	}
+task clean(type:Delete)
 
-	repositories {
-		maven {
-			url "https://repository-cdn.liferay.com/nexus/content/groups/public"
+clean {
+	doFirst {
+		String mavenLocalRepo = System.getProperty("maven.local.repo")
+
+		if (mavenLocalRepo != null) {
+			delete mavenLocalRepo
 		}
 	}
 }
 
-apply plugin: 'biz.aQute.bnd.builder'
-apply plugin: 'com.liferay.source.formatter'
-apply plugin: 'java'
+subprojects {
+	plugins.withId("java") {
+		repositories {
+			flatDir {
+				dirs "${rootProject.projectDir}/libs"
+			}
 
-checkSourceFormatting {
-	maxLineLength = 120
-}
+			maven {
+				url "https://repository-cdn.liferay.com/nexus/content/groups/public"
+			}
+		}
 
-dependencies {
-	compileOnly group: "com.beust", name: "jcommander", version: "1.72"
-}
-
-formatSource {
-	maxLineLength = 120
-}
-
-repositories {
-	maven {
-		url "https://liferay-test-01.ci.cloudbees.com/job/liferay-blade-cli/lastSuccessfulBuild/artifact/mavenRepo/"
-	}
-	maven {
-		url "https://repository-cdn.liferay.com/nexus/content/groups/public"
+		sourceCompatibility = "1.8"
+		targetCompatibility = "1.8"
 	}
 }
-
