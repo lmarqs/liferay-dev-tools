@@ -18,8 +18,13 @@ allprojects {
 
     repositories {
         mavenCentral()
-        maven { url 'https://liferay-test-01.ci.cloudbees.com/job/liferay-blade-cli/lastSuccessfulBuild/artifact/mavenRepo/' }
         maven { url 'https://repository-cdn.liferay.com/nexus/content/groups/public' }
+        ivy {
+            url 'https://releases.liferay.com/tools/blade-cli'
+            layout 'pattern', {
+                artifact '[revision]/[artifact].[ext]'
+            }
+        }
     }
 
     compileJava {
