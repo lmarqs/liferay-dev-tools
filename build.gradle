@@ -38,11 +38,10 @@ allprojects {
             googleJavaFormat()
             licenseHeaderFile rootProject.file('src/spotless/eclipse-public-license-1.0.java')
             importOrder 'java', 'javax', 'com', 'org'
-            eclipse().configFile rootProject.file('src/eclipse/eclipse-formatter-settings.xml')
+            eclipse().configFile rootProject.file('src/eclipse/eclipse-java-objective-style.xml')
             trimTrailingWhitespace()
             endWithNewline()
             removeUnusedImports()
-            custom 'Lambda fix', { it.replace('} )', '})').replace('} ,', '},') }
         }
     }
 
