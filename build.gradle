@@ -1,28 +1,49 @@
-task clean(type:Delete)
+buildscript {
+    repositories {
+        maven { url 'https://repository-cdn.liferay.com/nexus/content/groups/public' }
+        maven { url 'https://plugins.gradle.org/m2/' }
+    }
 
-clean {
-	doFirst {
-		String mavenLocalRepo = System.getProperty("maven.local.repo")
-
-		if (mavenLocalRepo != null) {
-			delete mavenLocalRepo
-		}
-	}
+    dependencies {
+        classpath 'biz.aQute.bnd:biz.aQute.bnd.gradle:3.5.0'
+        classpath 'com.diffplug.spotless:spotless-plugin-gradle:3.14.0'
+    }
 }
 
-subprojects {
-	plugins.withId("java") {
-		repositories {
-			flatDir {
-				dirs "${rootProject.projectDir}/libs"
-			}
+allprojects {
 
-			maven {
-				url "https://repository-cdn.liferay.com/nexus/content/groups/public"
-			}
-		}
+    apply plugin: 'java'
+    apply plugin: 'com.diffplug.gradle.spotless'
+    apply plugin: 'biz.aQute.bnd.builder'
 
-		sourceCompatibility = "1.8"
-		targetCompatibility = "1.8"
-	}
+    repositories {
+        mavenCentral()
+        maven { url 'https://liferay-test-01.ci.cloudbees.com/job/liferay-blade-cli/lastSuccessfulBuild/artifact/mavenRepo/' }
+        maven { url 'https://repository-cdn.liferay.com/nexus/content/groups/public' }
+    }
+
+    compileJava {
+        sourceCompatibility = 1.8
+        targetCompatibility = 1.8
+    }
+
+    compileTestJava {
+        sourceCompatibility = 1.8
+        targetCompatibility = 1.8
+        options.compilerArgs += '-parameters'
+    }
+
+    spotless {
+        java {
+            googleJavaFormat()
+            licenseHeaderFile rootProject.file('src/spotless/eclipse-public-license-1.0.java')
+            importOrder 'java', 'javax', 'com', 'org'
+            eclipse().configFile rootProject.file('src/eclipse/eclipse-formatter-settings.xml')
+            trimTrailingWhitespace()
+            endWithNewline()
+            removeUnusedImports()
+            custom 'Lambda fix', { it.replace('} )', '})').replace('} ,', '},') }
+        }
+    }
+
 }

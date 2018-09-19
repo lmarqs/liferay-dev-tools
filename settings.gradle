@@ -1,1 +1,3 @@
-include "modules:sample-command"
+rootProject.name = 'liferay-dev-tools'
+
+include 'modules:blade:extensions:eclipse'
