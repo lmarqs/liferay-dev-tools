@@ -15,10 +15,11 @@
  */
 package br.com.objective.liferay.blade.extensions.eclipse.classpath;
 
+import java.io.Serializable;
 import java.util.Map;
 import java.util.TreeMap;
 
-public class ClasspathEntry implements Comparable {
+public class ClasspathEntry implements Comparable, Serializable {
 
   public enum Attribute {
     KIND("kind"),
@@ -61,6 +62,15 @@ public class ClasspathEntry implements Comparable {
 
   public String get(String name) {
     return attributes.get(name);
+  }
+
+  public void set(Attribute attribute, String value) {
+    String name = attribute.getName();
+    if (attributes.containsKey(name)) {
+      attributes.replace(name, value);
+    } else {
+      attributes.replace(name, value);
+    }
   }
 
   @Override

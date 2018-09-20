@@ -15,10 +15,11 @@
  */
 package br.com.objective.liferay.blade.extensions.eclipse.classpath;
 
+import java.io.Serializable;
 import java.util.Set;
 import java.util.TreeSet;
 
-public class Classpath {
+public class Classpath implements Serializable {
 
   private final Set<ClasspathEntry> classpathEntries;
 

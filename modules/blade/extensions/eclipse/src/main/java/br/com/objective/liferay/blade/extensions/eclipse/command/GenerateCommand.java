@@ -18,7 +18,8 @@ package br.com.objective.liferay.blade.extensions.eclipse.command;
 import java.io.File;
 
 import br.com.objective.liferay.blade.extensions.eclipse.classpath.Classpath;
-import br.com.objective.liferay.blade.extensions.eclipse.classpath.ClasspathXMLUtil;
+import br.com.objective.liferay.blade.extensions.eclipse.classpath.ClasspathResolver;
+import br.com.objective.liferay.blade.extensions.eclipse.util.ClasspathXMLUtil;
 
 import com.liferay.blade.cli.BladeCLI;
 import com.liferay.blade.cli.command.BaseCommand;
@@ -41,9 +42,9 @@ public class GenerateCommand extends BaseCommand<GenerateArgs> {
 
     Classpath classpath = ClasspathXMLUtil.readClasspath(file);
 
-    bladeCli.out("classpath ->" + classpath.toString());
+    ClasspathResolver resolver = new ClasspathResolver(file, classpath);
 
-    ClasspathXMLUtil.writeClasspath(file, classpath);
+    ClasspathXMLUtil.writeClasspath(file, resolver.resolve());
 
     bladeCli.out("done");
   }
