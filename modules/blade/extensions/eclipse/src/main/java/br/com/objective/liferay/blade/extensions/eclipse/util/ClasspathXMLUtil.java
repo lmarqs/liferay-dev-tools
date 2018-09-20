@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package br.com.objective.liferay.blade.extensions.eclipse.classpath;
+package br.com.objective.liferay.blade.extensions.eclipse.util;
 
 import java.io.File;
 import java.io.IOException;
@@ -26,6 +26,8 @@ import javax.xml.transform.*;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import br.com.objective.liferay.blade.extensions.eclipse.classpath.Classpath;
+import br.com.objective.liferay.blade.extensions.eclipse.classpath.ClasspathEntry;
 import br.com.objective.liferay.blade.extensions.eclipse.classpath.ClasspathEntry.Attribute;
 
 import org.w3c.dom.Document;
@@ -38,8 +40,6 @@ public class ClasspathXMLUtil {
 
   public static final String TAG_NAME_CLASSPATH_ENTRY = "classpathentry";
   public static final String TAG_NAME_CLASSPATH = "classpath";
-  public static final String YES = "yes";
-  public static final String EMPTY_VALUE = "";
 
   public static Classpath readClasspath(File file)
       throws IOException, SAXException, ParserConfigurationException {
@@ -107,7 +107,8 @@ public class ClasspathXMLUtil {
         .map(Attribute::getName)
         .forEach(
             name -> {
-              String value = element.hasAttribute(name) ? element.getAttribute(name) : EMPTY_VALUE;
+              String value =
+                  element.hasAttribute(name) ? element.getAttribute(name) : StringPool.BLANK;
               attributes.put(name, value);
             });
 
@@ -149,7 +150,7 @@ public class ClasspathXMLUtil {
     Transformer transformer = transformerFactory.newTransformer();
 
     // for pretty print
-    transformer.setOutputProperty(OutputKeys.INDENT, YES);
+    transformer.setOutputProperty(OutputKeys.INDENT, StringPool.YES);
     transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
 
     DOMSource source = new DOMSource(document);
@@ -171,7 +172,9 @@ public class ClasspathXMLUtil {
         .forEach(
             name -> {
               String value = classpathEntry.get(name);
-              element.setAttribute(name, value);
+              if (!value.isEmpty()) {
+                element.setAttribute(name, value);
+              }
             });
 
     return element;
