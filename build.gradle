@@ -10,45 +10,79 @@ buildscript {
     }
 }
 
-['modules:blade:extensions:eclipse'].each { name ->
-    project(":$name") {
+/****************************************
+ * instructions for all projects
+ ****************************************/
+allprojects {
+    apply plugin: 'java'
+    apply plugin: 'com.diffplug.gradle.spotless'
+    apply plugin: 'biz.aQute.bnd.builder'
 
-        apply plugin: 'java'
-        apply plugin: 'com.diffplug.gradle.spotless'
-        apply plugin: 'biz.aQute.bnd.builder'
+    group = 'br.com.objective.liferay'
+    version = '1.0'
 
-        repositories {
-            mavenCentral()
-            maven { url 'https://repository-cdn.liferay.com/nexus/content/groups/public' }
-            ivy {
-                url 'https://releases.liferay.com/tools/blade-cli'
-                layout 'pattern', {
-                    artifact '[revision]/[artifact].[ext]'
-                }
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+
+    repositories {
+        mavenCentral()
+        maven { url 'https://repository-cdn.liferay.com/nexus/content/groups/public' }
+        ivy {
+            url 'https://releases.liferay.com/tools/blade-cli'
+            layout 'pattern', {
+                artifact '[revision]/[artifact].[ext]'
             }
         }
+    }
 
-        compileJava {
-            sourceCompatibility = 1.8
-            targetCompatibility = 1.8
+    spotless {
+        java {
+            googleJavaFormat()
+            licenseHeaderFile rootProject.file('src/spotless/eclipse-public-license-1.0.java')
+            importOrder 'java', 'javax', 'com', 'org'
+            eclipse().configFile rootProject.file('src/eclipse/eclipse-java-objective-style.xml')
+            trimTrailingWhitespace()
+            endWithNewline()
+            removeUnusedImports()
         }
+    }
 
-        compileTestJava {
-            sourceCompatibility = 1.8
-            targetCompatibility = 1.8
-            options.compilerArgs += '-parameters'
+}
+
+/****************************************
+ * instructions for each sub project
+ ****************************************/
+subprojects {
+
+    dependencies {
+        compileOnly group: 'com.beust', name: 'jcommander', version: '1.72'
+        compileOnly group: 'com.liferay.blade', name: 'blade', version: '3.1.0.201807032155'
+    }
+}
+
+/****************************************
+ * Single library jar containing all sub projects and 3rd party dependencies
+ ****************************************/
+configurations {
+    childJars
+}
+
+dependencies {
+    subprojects.each {
+        childJars project(it.path)
+    }
+}
+
+jar {
+    dependsOn configurations.childJars
+    from {
+        configurations.childJars.collect {
+            zipTree(it)
         }
-
-        spotless {
-            java {
-                googleJavaFormat()
-                licenseHeaderFile rootProject.file('src/spotless/eclipse-public-license-1.0.java')
-                importOrder 'java', 'javax', 'com', 'org'
-                eclipse().configFile rootProject.file('src/eclipse/eclipse-java-objective-style.xml')
-                trimTrailingWhitespace()
-                endWithNewline()
-                removeUnusedImports()
-            }
+    }
+    doLast {
+        configurations.childJars.collect {
+            delete(it)
         }
     }
 }
