@@ -35,6 +35,11 @@ public class ClasspathEntry implements Comparable, Serializable {
     public String getName() {
       return this.name;
     }
+
+    @Override
+    public String toString() {
+      return this.getName();
+    }
   }
 
   public enum Kind {
@@ -48,9 +53,13 @@ public class ClasspathEntry implements Comparable, Serializable {
       this.value = value;
     }
 
+    public String getValue() {
+      return this.value;
+    }
+
     @Override
     public String toString() {
-      return this.value;
+      return this.getValue();
     }
   }
 
@@ -60,16 +69,20 @@ public class ClasspathEntry implements Comparable, Serializable {
     this.attributes = new TreeMap<>(attributes);
   }
 
-  public String get(String name) {
-    return attributes.get(name);
+  public ClasspathEntry() {
+    this.attributes = new TreeMap<>();
   }
 
-  public void set(Attribute attribute, String value) {
+  public String get(Object name) {
+    return attributes.get(name.toString());
+  }
+
+  public void set(Attribute attribute, Object value) {
     String name = attribute.getName();
     if (attributes.containsKey(name)) {
-      attributes.replace(name, value);
+      attributes.replace(name, value.toString());
     } else {
-      attributes.replace(name, value);
+      attributes.replace(name, value.toString());
     }
   }
 

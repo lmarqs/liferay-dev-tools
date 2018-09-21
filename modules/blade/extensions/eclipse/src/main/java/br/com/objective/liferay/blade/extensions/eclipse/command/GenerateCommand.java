@@ -15,11 +15,7 @@
  */
 package br.com.objective.liferay.blade.extensions.eclipse.command;
 
-import java.io.File;
-
-import br.com.objective.liferay.blade.extensions.eclipse.classpath.Classpath;
-import br.com.objective.liferay.blade.extensions.eclipse.classpath.ClasspathResolver;
-import br.com.objective.liferay.blade.extensions.eclipse.util.ClasspathXMLUtil;
+import br.com.objective.liferay.blade.extensions.eclipse.util.ClasspathResolver;
 
 import com.liferay.blade.cli.BladeCLI;
 import com.liferay.blade.cli.command.BaseCommand;
@@ -31,22 +27,27 @@ public class GenerateCommand extends BaseCommand<GenerateArgs> {
   public void execute() throws Exception {
     BladeCLI bladeCli = getBladeCLI();
 
-    bladeCli.out("Generating Eclipse IDE artifacts");
+    bladeCli.out("\uD83D\uDE80 Generating Eclipse IDE artifacts");
 
-    GenerateArgs generateArgs = getArgs();
+    generate();
 
-    GradleExec gradleExec = new GradleExec(bladeCli);
+    bladeCli.out("\uD83D\uDE80 Resolving modules dependencies");
+
+    resolve();
+
+    bladeCli.out("\uD83D\uDC4D Done");
+  }
+
+  private void resolve() throws Exception {
+    ClasspathResolver resolver = new ClasspathResolver(getBladeCLI());
+
+    resolver.resolve();
+  }
+
+  private void generate() throws Exception {
+    GradleExec gradleExec = new GradleExec(getBladeCLI());
+
     gradleExec.executeGradleCommand("clean assemble eclipse");
-
-    File file = new File(bladeCli.getBase(), ".classpath");
-
-    Classpath classpath = ClasspathXMLUtil.readClasspath(file);
-
-    ClasspathResolver resolver = new ClasspathResolver(file, classpath);
-
-    ClasspathXMLUtil.writeClasspath(file, resolver.resolve());
-
-    bladeCli.out("done");
   }
 
   @Override
