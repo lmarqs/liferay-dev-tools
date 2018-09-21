@@ -100,18 +100,18 @@ public class ClasspathResolver {
   }
 
   public void resolve() {
-    bladeCli.out("Resolving modules classpath");
+    bladeCli.out("[INFO] Resolving modules classpath");
     findSubModules()
         .forEach(
             modulePath -> {
               try {
 
-                bladeCli.out("Resolving module " + modulePath.getFileName().toString());
+                bladeCli.out("[INFO] Resolving module: " + modulePath.getFileName().toString());
 
                 resolve(modulePath);
 
               } catch (Exception e) {
-                bladeCli.err(e.getMessage());
+                bladeCli.err("[WARN] Unable to resolve module: " + e.getMessage());
               }
             });
   }

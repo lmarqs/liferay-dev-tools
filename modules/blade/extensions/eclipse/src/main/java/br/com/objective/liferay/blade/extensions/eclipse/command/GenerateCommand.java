@@ -27,15 +27,15 @@ public class GenerateCommand extends BaseCommand<GenerateArgs> {
   public void execute() throws Exception {
     BladeCLI bladeCli = getBladeCLI();
 
-    bladeCli.out("\uD83D\uDE80 Generating Eclipse IDE artifacts");
+    bladeCli.out("[INFO] \uD83D\uDE80 Generating Eclipse IDE artifacts");
 
     generate();
 
-    bladeCli.out("\uD83D\uDE80 Resolving modules dependencies");
+    bladeCli.out("[INFO] \uD83D\uDE80 Resolving modules dependencies");
 
     resolve();
 
-    bladeCli.out("\uD83D\uDC4D Done");
+    bladeCli.out("[INFO] \uD83D\uDC4D Done");
   }
 
   private void resolve() throws Exception {
