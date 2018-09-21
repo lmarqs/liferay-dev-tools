@@ -87,6 +87,7 @@ public class ClasspathResolver {
 
         return Files.walk(root.get())
             .filter(path -> path.getFileName().equals(modulePath))
+            .filter(path -> !Files.exists(path.resolve(path.getFileName())))
             .map(Path::toAbsolutePath)
             .findFirst();
 
