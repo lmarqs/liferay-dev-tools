@@ -1,10 +1,19 @@
 # liferay-dev-tools
 
-This project provides a tooling to work with Liferay Portal development.
+Unleash the true power of development for Liferay Portal :muscle: :punch: :boom: :boom: :metal:
 
-## Blade extensions:
+## Blade
 
 Compatible with `blade-cli` version `3.1.0.201807032155`.
+
+
+### Scripts
+
+| File | Feature |
+| -----| ------- |
+| [install-blade.sh](https://github.com/lmarqs/liferay-dev-tools/blob/master/modules/blade/install-blade.sh) | Installs `blade-cli` locally `(-u)` version compatible with the project |
+
+### Extensions
 
 **Commands:**
 
@@ -15,7 +24,6 @@ $ blade <main class> [command] [command options]
 ```
 
 Example:
-Usage:
 
 ```.sh
 $ blade eclipse:generate
