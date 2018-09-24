@@ -15,6 +15,7 @@
  */
 package br.com.objective.liferay.blade.extensions.eclipse.command;
 
+import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 import com.liferay.blade.cli.command.BaseArgs;
 
@@ -23,4 +24,9 @@ import com.liferay.blade.cli.command.BaseArgs;
   commandDescription = "Generate Eclipse IDE artifacts",
   commandNames = "eclipse:generate"
 )
-public class GenerateArgs extends BaseArgs {}
+public class GenerateArgs extends BaseArgs {
+
+    @Parameter(names="--skip-assemble")
+    boolean skipAssemble = false;
+
+}

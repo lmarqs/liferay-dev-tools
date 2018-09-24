@@ -47,7 +47,19 @@ public class GenerateCommand extends BaseCommand<GenerateArgs> {
   private void generate() throws Exception {
     GradleExec gradleExec = new GradleExec(getBladeCLI());
 
-    gradleExec.executeGradleCommand("clean assemble eclipse");
+    GenerateArgs args = getArgs();
+
+    StringBuilder commandBuilder = new StringBuilder();
+
+    if (!args.skipAssemble) {
+      commandBuilder.append(" clean assemble ");
+    }
+
+    commandBuilder.append(" eclipse ");
+
+    String command = commandBuilder.toString();
+
+    gradleExec.executeGradleCommand(command.replaceAll("[ ]+", " "));
   }
 
   @Override
