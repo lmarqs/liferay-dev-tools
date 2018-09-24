@@ -17,7 +17,7 @@ Compatible with `blade-cli` version `3.1.0.201807032155`.
 
 **Install:**
 
-```.sh 
+```.sh
 $ blade extension install https://github.com/lmarqs/liferay-dev-tools
 ```
 
@@ -39,4 +39,3 @@ $ blade eclipse:generate --skip-assemble
 | Command                  | Feature   |
 | ------------------------ | --------- |
 | `eclipse:generate`       | Generates Eclipse IDE related artifacts and resolve the `.classpath` file dependencies using the `classes` directory instead of module reference |
-
