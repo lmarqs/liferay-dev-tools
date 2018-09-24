@@ -1,3 +1,4 @@
 rootProject.name = 'liferay-dev-tools'
 
+include 'modules:bash'
 include 'modules:blade:extensions:eclipse'
