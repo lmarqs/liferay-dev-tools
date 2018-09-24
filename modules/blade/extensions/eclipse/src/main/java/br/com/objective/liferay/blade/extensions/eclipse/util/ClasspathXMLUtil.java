@@ -39,7 +39,7 @@ import org.xml.sax.SAXException;
 public class ClasspathXMLUtil {
 
   public static final String TAG_NAME_CLASSPATH_ENTRY = "classpathentry";
-  public static final String TAG_NAME_CLASSPATH = "model";
+  public static final String TAG_NAME_CLASSPATH = "classpath";
 
   public static Classpath readClasspath(File file)
       throws IOException, SAXException, ParserConfigurationException {

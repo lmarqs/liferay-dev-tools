@@ -19,9 +19,8 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Optional;
-import java.util.stream.Stream;
+import java.util.Map;
+import java.util.TreeMap;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
@@ -38,88 +37,92 @@ import org.xml.sax.SAXException;
 public class ClasspathResolver {
 
   private final BladeCLI bladeCli;
-  private final Path base;
-  private Path root;
+  private final Path baseModulePath;
+  private final Path workspacePath;
+  private final Map<String, Path> modules = new TreeMap<>();
+  private final Map<String, Path> submodules = new TreeMap<>();
 
   public ClasspathResolver(BladeCLI bladeCli) throws Exception {
     this.bladeCli = bladeCli;
-    this.base = bladeCli.getBase().toPath();
+
+    this.baseModulePath = bladeCli.getBase().toPath().normalize().toAbsolutePath();
+
+    this.workspacePath = findWorkspacePath();
+
+    doIndexModules();
   }
 
-  private Optional<Path> getRoot() {
+  private Path findWorkspacePath() throws Exception {
 
-    if (root != null) {
-      return Optional.of(root);
-    }
-
-    root = bladeCli.getBase().toPath().toAbsolutePath();
+    Path currentModule = baseModulePath;
 
     do {
-      if (Files.exists(root.resolve("settings.gradle"))) {
-        return Optional.of(root);
+      if (Files.exists(currentModule.resolve("settings.gradle"))) {
+        return currentModule;
       }
-      root = root.getParent();
+      currentModule = currentModule.getParent();
 
-    } while (root != null);
+    } while (currentModule != null);
 
-    return Optional.empty();
+    throw new Exception("Could not find workspace directory. settings.gradle not found");
   }
 
-  private Stream<Path> findSubModules() {
-    try {
-
-      return Files.walk(base)
-          .filter(file -> Files.exists(file.resolve("build.gradle")))
-          .map(Path::toAbsolutePath);
-
-    } catch (IOException ignored) {
-      return Stream.empty();
-    }
+  private void doIndexModules() {
+    doIndexModules(workspacePath.toFile(), workspacePath.equals(baseModulePath));
   }
 
-  private Optional<Path> findModule(String module) {
-    Optional<Path> root = getRoot();
+  private void doIndexModules(File directory, boolean isSubmodule) {
 
-    if (root.isPresent()) {
-      try {
+    if (new File(directory, "build.gradle").exists()) {
 
-        Path modulePath = Paths.get(module).getFileName();
+      String name = directory.getName();
+      Path path = directory.toPath();
 
-        return Files.walk(root.get())
-            .filter(path -> path.getFileName().equals(modulePath))
-            .filter(path -> !Files.exists(path.resolve(path.getFileName())))
-            .map(Path::toAbsolutePath)
-            .findFirst();
+      modules.put(name, path);
 
-      } catch (IOException ignored) {
-        return Optional.empty();
+      if (isSubmodule) {
+        submodules.put(name, path);
       }
     }
 
-    return Optional.empty();
+    File[] files = directory.listFiles();
+
+    for (int i = 0, length = files.length; i < length; i++) {
+
+      File file = files[i];
+
+      if (file.isDirectory()) {
+
+        String name = file.getName();
+
+        if (!name.matches("^(build|classes|node_modules|out|src)$")) {
+          doIndexModules(file, isSubmodule || file.toPath().equals(baseModulePath));
+        }
+      }
+    }
   }
 
   public void resolve() {
-    bladeCli.out("[INFO] Resolving modules model");
-    findSubModules()
-        .forEach(
-            modulePath -> {
-              try {
+    bladeCli.out("[INFO] Resolving modules");
 
-                bladeCli.out("[INFO] Resolving module: " + modulePath.getFileName().toString());
+    submodules.forEach(
+        (name, path) -> {
+          try {
 
-                resolve(modulePath);
+            bladeCli.out("[INFO] Resolving: " + name);
 
-              } catch (Exception e) {
-                bladeCli.err("[WARN] Unable to resolve module: " + e.getMessage());
-              }
-            });
+            resolve(path);
+
+          } catch (Exception e) {
+            bladeCli.err("[WARN] Unable to resolve: " + e.getMessage());
+          }
+        });
   }
 
-  public void resolve(Path modulePath)
+  public void resolve(Path module)
       throws ParserConfigurationException, SAXException, IOException, TransformerException {
 
-    File file = modulePath.resolve(".model").toFile();
+    File file = module.resolve(".classpath").toFile();
 
     Classpath classpath = ClasspathXMLUtil.readClasspath(file);
 
@@ -134,12 +137,16 @@ public class ClasspathResolver {
   }
 
   public void resolve(ClasspathEntry classpathEntry) {
-    findModule(classpathEntry.get(Attribute.PATH))
-        .ifPresent(
-            modulePath -> {
-              classpathEntry.set(Attribute.KIND, Kind.LIB);
-              classpathEntry.set(Attribute.PATH, modulePath.resolve("classes"));
-              classpathEntry.set(Attribute.SOURCEPATH, modulePath.resolve("src/main/java"));
-            });
+
+    String path = classpathEntry.get(Attribute.PATH);
+
+    if (modules.containsKey(path)) {
+
+      Path module = modules.get(path);
+
+      classpathEntry.set(Attribute.KIND, Kind.LIB);
+      classpathEntry.set(Attribute.PATH, module.resolve("classes"));
+      classpathEntry.set(Attribute.SOURCEPATH, module.resolve("src/main/java"));
+    }
   }
 }
