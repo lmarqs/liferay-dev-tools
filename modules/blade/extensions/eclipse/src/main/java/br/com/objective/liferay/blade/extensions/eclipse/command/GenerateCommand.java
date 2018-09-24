@@ -51,8 +51,8 @@ public class GenerateCommand extends BaseCommand<GenerateArgs> {
 
     StringBuilder commandBuilder = new StringBuilder();
 
-    if (!args.skipAssemble) {
-      commandBuilder.append(" clean assemble ");
+    if (!args.skipClasses) {
+      commandBuilder.append(" classes ");
     }
 
     commandBuilder.append(" eclipse ");

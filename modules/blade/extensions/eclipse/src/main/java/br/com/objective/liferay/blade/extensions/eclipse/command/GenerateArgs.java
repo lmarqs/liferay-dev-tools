@@ -26,6 +26,6 @@ import com.liferay.blade.cli.command.BaseArgs;
 )
 public class GenerateArgs extends BaseArgs {
 
-  @Parameter(names = "--skip-assemble", description = "Do not generate classes dir (run faster)")
-  boolean skipAssemble = false;
+  @Parameter(names = "--skip-classes", description = "Do not generate classes dir (run faster)")
+  boolean skipClasses = false;
 }
