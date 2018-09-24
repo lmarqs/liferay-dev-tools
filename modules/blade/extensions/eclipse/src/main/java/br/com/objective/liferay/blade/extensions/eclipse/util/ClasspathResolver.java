@@ -19,6 +19,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -137,16 +138,20 @@ public class ClasspathResolver {
   }
 
   public void resolve(ClasspathEntry classpathEntry) {
+    try {
+      String name = Paths.get(classpathEntry.get(Attribute.PATH)).getFileName().toString();
 
-    String path = classpathEntry.get(Attribute.PATH);
+      if (!modules.containsKey(name)) {
+        throw new Exception("Module not found:" + name);
+      }
 
-    if (modules.containsKey(path)) {
-
-      Path module = modules.get(path);
+      Path module = modules.get(name);
 
       classpathEntry.set(Attribute.KIND, Kind.LIB);
       classpathEntry.set(Attribute.PATH, module.resolve("classes"));
       classpathEntry.set(Attribute.SOURCEPATH, module.resolve("src/main/java"));
+    } catch (Exception e) {
+      bladeCli.err("[WARN] " + e.getMessage());
     }
   }
 }
