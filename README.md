@@ -15,6 +15,13 @@ Compatible with `blade-cli` version `3.1.0.201807032155`.
 
 ### Extensions
 
+**Install:**
+
+```.sh 
+$ blade extension install https://github.com/lmarqs/liferay-dev-tools
+```
+
+
 **Commands:**
 
 Usage:
@@ -29,7 +36,7 @@ Example:
 $ blade eclipse:generate
 ```
 
-| Command                | Feature   |
-| ---------------------- | --------- |
-| eclipse:generate       | Generates Eclipse IDE related artifacts and resolve the `.classpath` file dependencies using the `classes` directory instead of module reference |
+| Command                  | Feature   |
+| ------------------------ | --------- |
+| `eclipse:generate`       | Generates Eclipse IDE related artifacts and resolve the `.classpath` file dependencies using the `classes` directory instead of module reference |
 
