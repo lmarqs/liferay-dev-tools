@@ -33,7 +33,7 @@ $ blade <main class> [command] [command options]
 Example:
 
 ```.sh
-$ blade eclipse:generate
+$ blade eclipse:generate --skip-assemble
 ```
 
 | Command                  | Feature   |
