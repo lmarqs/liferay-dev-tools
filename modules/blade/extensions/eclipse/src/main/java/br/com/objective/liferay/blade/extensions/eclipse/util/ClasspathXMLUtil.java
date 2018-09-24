@@ -26,9 +26,9 @@ import javax.xml.transform.*;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import br.com.objective.liferay.blade.extensions.eclipse.classpath.Classpath;
-import br.com.objective.liferay.blade.extensions.eclipse.classpath.ClasspathEntry;
-import br.com.objective.liferay.blade.extensions.eclipse.classpath.ClasspathEntry.Attribute;
+import br.com.objective.liferay.blade.extensions.eclipse.model.Classpath;
+import br.com.objective.liferay.blade.extensions.eclipse.model.ClasspathEntry;
+import br.com.objective.liferay.blade.extensions.eclipse.model.ClasspathEntry.Attribute;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -39,7 +39,7 @@ import org.xml.sax.SAXException;
 public class ClasspathXMLUtil {
 
   public static final String TAG_NAME_CLASSPATH_ENTRY = "classpathentry";
-  public static final String TAG_NAME_CLASSPATH = "classpath";
+  public static final String TAG_NAME_CLASSPATH = "model";
 
   public static Classpath readClasspath(File file)
       throws IOException, SAXException, ParserConfigurationException {

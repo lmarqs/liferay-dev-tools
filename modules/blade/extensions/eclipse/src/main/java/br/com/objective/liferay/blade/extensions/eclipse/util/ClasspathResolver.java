@@ -26,10 +26,10 @@ import java.util.stream.Stream;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
-import br.com.objective.liferay.blade.extensions.eclipse.classpath.Classpath;
-import br.com.objective.liferay.blade.extensions.eclipse.classpath.ClasspathEntry;
-import br.com.objective.liferay.blade.extensions.eclipse.classpath.ClasspathEntry.Attribute;
-import br.com.objective.liferay.blade.extensions.eclipse.classpath.ClasspathEntry.Kind;
+import br.com.objective.liferay.blade.extensions.eclipse.model.Classpath;
+import br.com.objective.liferay.blade.extensions.eclipse.model.ClasspathEntry;
+import br.com.objective.liferay.blade.extensions.eclipse.model.ClasspathEntry.Attribute;
+import br.com.objective.liferay.blade.extensions.eclipse.model.ClasspathEntry.Kind;
 
 import com.liferay.blade.cli.BladeCLI;
 
@@ -100,7 +100,7 @@ public class ClasspathResolver {
   }
 
   public void resolve() {
-    bladeCli.out("[INFO] Resolving modules classpath");
+    bladeCli.out("[INFO] Resolving modules model");
     findSubModules()
         .forEach(
             modulePath -> {
@@ -119,7 +119,7 @@ public class ClasspathResolver {
   public void resolve(Path modulePath)
       throws ParserConfigurationException, SAXException, IOException, TransformerException {
 
-    File file = modulePath.resolve(".classpath").toFile();
+    File file = modulePath.resolve(".model").toFile();
 
     Classpath classpath = ClasspathXMLUtil.readClasspath(file);
 

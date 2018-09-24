@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package br.com.objective.liferay.blade.extensions.eclipse.classpath;
+package br.com.objective.liferay.blade.extensions.eclipse.model;
 
 import java.io.Serializable;
 import java.util.Map;
