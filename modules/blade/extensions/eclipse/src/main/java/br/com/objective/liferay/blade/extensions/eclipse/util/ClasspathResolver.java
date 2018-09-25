@@ -16,15 +16,11 @@
 package br.com.objective.liferay.blade.extensions.eclipse.util;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
 import java.util.TreeMap;
-
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerException;
 
 import br.com.objective.liferay.blade.extensions.eclipse.model.Classpath;
 import br.com.objective.liferay.blade.extensions.eclipse.model.ClasspathEntry;
@@ -32,8 +28,6 @@ import br.com.objective.liferay.blade.extensions.eclipse.model.ClasspathEntry.At
 import br.com.objective.liferay.blade.extensions.eclipse.model.ClasspathEntry.Kind;
 
 import com.liferay.blade.cli.BladeCLI;
-
-import org.xml.sax.SAXException;
 
 public class ClasspathResolver {
 
@@ -105,44 +99,39 @@ public class ClasspathResolver {
 
   public void resolve() {
     bladeCli.out("[INFO] Resolving modules");
-
-    submodules.forEach(
-        (name, path) -> {
-          try {
-
-            bladeCli.out("[INFO] Resolving: " + name);
-
-            resolve(path);
-
-          } catch (Exception e) {
-            bladeCli.err("[WARN] Unable to resolve: " + e.getMessage());
-          }
-        });
+    submodules.forEach(this::resolve);
   }
 
-  public void resolve(Path module)
-      throws ParserConfigurationException, SAXException, IOException, TransformerException {
+  public void resolve(String name, Path module) {
+    try {
 
-    File file = module.resolve(".classpath").toFile();
+      bladeCli.out("[INFO] Resolving: " + name);
 
-    Classpath classpath = ClasspathXMLUtil.readClasspath(file);
+      File file = module.resolve(".classpath").toFile();
 
-    classpath
-        .getClasspathEntries()
-        .stream()
-        .filter(entry -> entry.get(Attribute.KIND).equals(Kind.SRC.toString()))
-        .filter(entry -> !entry.get(Attribute.PATH).startsWith("src"))
-        .forEach(this::resolve);
+      Classpath classpath = ClasspathXMLUtil.readClasspath(file);
 
-    ClasspathXMLUtil.writeClasspath(file, classpath);
+      classpath
+          .getClasspathEntries()
+          .stream()
+          .filter(entry -> entry.get(Attribute.KIND).equals(Kind.SRC.toString()))
+          .filter(entry -> !entry.get(Attribute.PATH).startsWith("src"))
+          .forEach(this::resolve);
+
+      ClasspathXMLUtil.writeClasspath(file, classpath);
+
+    } catch (Exception e) {
+      bladeCli.err("[WARN] Unable to resolve: " + e.getMessage());
+    }
   }
 
   public void resolve(ClasspathEntry classpathEntry) {
     try {
+
       String name = Paths.get(classpathEntry.get(Attribute.PATH)).getFileName().toString();
 
       if (!modules.containsKey(name)) {
-        throw new Exception("Module not found:" + name);
+        throw new Exception("Module not found: " + name);
       }
 
       Path module = modules.get(name);
@@ -150,6 +139,7 @@ public class ClasspathResolver {
       classpathEntry.set(Attribute.KIND, Kind.LIB);
       classpathEntry.set(Attribute.PATH, module.resolve("classes"));
       classpathEntry.set(Attribute.SOURCEPATH, module.resolve("src/main/java"));
+
     } catch (Exception e) {
       bladeCli.err("[WARN] " + e.getMessage());
     }
