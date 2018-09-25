@@ -49,17 +49,15 @@ public class GenerateCommand extends BaseCommand<GenerateArgs> {
 
     GenerateArgs args = getArgs();
 
-    StringBuilder commandBuilder = new StringBuilder();
+    StringBuilder command = new StringBuilder();
 
-    if (!args.skipClasses) {
-      commandBuilder.append(" classes ");
+    if (!args.skipJar) {
+      command.append(" jar");
     }
 
-    commandBuilder.append(" eclipse ");
+    command.append(" eclipse");
 
-    String command = commandBuilder.toString();
-
-    gradleExec.executeGradleCommand(command.replaceAll("[ ]+", " "));
+    gradleExec.executeGradleCommand(command.toString());
   }
 
   @Override
