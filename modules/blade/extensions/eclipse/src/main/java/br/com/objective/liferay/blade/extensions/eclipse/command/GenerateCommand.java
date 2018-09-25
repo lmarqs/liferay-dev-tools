@@ -15,6 +15,8 @@
  */
 package br.com.objective.liferay.blade.extensions.eclipse.command;
 
+import java.util.StringJoiner;
+
 import br.com.objective.liferay.blade.extensions.eclipse.util.ClasspathResolver;
 
 import com.liferay.blade.cli.BladeCLI;
@@ -49,13 +51,13 @@ public class GenerateCommand extends BaseCommand<GenerateArgs> {
 
     GenerateArgs args = getArgs();
 
-    StringBuilder command = new StringBuilder();
+    StringJoiner command = new StringJoiner(" ");
 
     if (!args.skipJar) {
-      command.append(" jar");
+      command.add("jar");
     }
 
-    command.append(" eclipse");
+    command.add("eclipse");
 
     gradleExec.executeGradleCommand(command.toString());
   }
