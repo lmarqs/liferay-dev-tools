@@ -21,6 +21,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.regex.Pattern;
 
 import br.com.objective.liferay.blade.extensions.eclipse.model.Classpath;
 import br.com.objective.liferay.blade.extensions.eclipse.model.ClasspathEntry;
@@ -30,6 +31,8 @@ import br.com.objective.liferay.blade.extensions.eclipse.model.ClasspathEntry.Ki
 import com.liferay.blade.cli.BladeCLI;
 
 public class ClasspathResolver {
+
+  private static final Pattern IGNORE = Pattern.compile("^(build|classes|node_modules|out|src)$");
 
   private final BladeCLI bladeCli;
   private final Path baseModulePath;
@@ -90,7 +93,7 @@ public class ClasspathResolver {
 
         String name = file.getName();
 
-        if (!name.matches("^(build|classes|node_modules|out|src)$")) {
+        if (!IGNORE.matcher(name).matches()) {
           doIndexModules(file, isSubmodule || file.toPath().equals(baseModulePath));
         }
       }
